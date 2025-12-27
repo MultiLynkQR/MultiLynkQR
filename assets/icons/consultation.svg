@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <defs>
+    <linearGradient id="consultGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#14B8A6"/>
+      <stop offset="100%" style="stop-color:#0D9488"/>
+    </linearGradient>
+  </defs>
+  <rect x="3" y="4" width="18" height="18" rx="3" fill="url(#consultGrad)"/>
+  <rect x="7" y="2" width="2" height="4" rx="1" fill="#134E4A"/>
+  <rect x="15" y="2" width="2" height="4" rx="1" fill="#134E4A"/>
+  <rect x="3" y="9" width="18" height="2" fill="#134E4A" opacity="0.3"/>
+  <circle cx="12" cy="14" r="3" fill="white"/>
+  <circle cx="12" cy="13" r="1" fill="#0D9488"/>
+  <path d="M10 17c0-1 1-2 2-2s2 1 2 2" fill="#0D9488"/>
+  <circle cx="17" cy="17" r="2.5" fill="#F59E0B"/>
+  <path d="M16.5 17h1m0 0v-1" stroke="white" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+</svg>
