@@ -390,6 +390,27 @@
         </button>
       </div>
 
+      <!-- Booking & Actions -->
+      <div class="form-section booking">
+        <h3>📅 Booking & Actions <span class="platform-count">6</span></h3>
+        <small>Direct links for bookings, appointments, tickets, reservations, and registrations (universal for any
+          business)</small>
+        <input type="url" id="bookingpage" placeholder="Booking Page - https://yourbooking.com">
+        <input type="url" id="appointment" placeholder="Appointment - https://example.com/appointment or scheduling link">
+        <input type="url" id="buytickets" placeholder="Buy Tickets - https://yourtickets.com or event ticket link">
+        <input type="url" id="reservation"
+          placeholder="Reservation - https://yourreservation.com (tables, hotels, etc.)">
+        <input type="url" id="registration"
+          placeholder="Registration - https://yourregistration.com (events, courses, etc.)">
+        <input type="url" id="consultation"
+          placeholder="Consultation - https://yourconsultation.com (book a call/meeting)">
+
+        <div id="booking-custom-container" class="custom-links-container"></div>
+        <button type="button" class="add-certificate-btn" onclick="addCustomLink('booking', '📅 Booking')">
+          ➕ Add Custom Link
+        </button>
+      </div>
+
       <!-- Food & Dining -->
       <div class="form-section food">
         <h3>🍔 Food & Dining <span class="platform-count">9</span></h3>
@@ -567,6 +588,7 @@
       business: ['crunchbase', 'glassdoor', 'indeed', 'naukri'],
       education: ['coursera', 'udemy', 'skillshare', 'khanacademy', 'byjus', 'unacademy', 'vedantu', 'upgrad', 'physicswallah'],
       pricing: ['pricelist'],
+      booking: ['bookingpage', 'appointment', 'buytickets', 'reservation', 'registration', 'consultation'],
       food: ['swiggy', 'zomato', 'dineout', 'eatsure', 'magicpin', 'jiomart', 'swiggyinstamart', 'dunzo', 'menucard'],
       transportation: ['ola', 'uber', 'rapido', 'porter'],
       travel: ['makemytrip', 'goibibo', 'oyo', 'cleartrip', 'ixigo'],
@@ -741,7 +763,7 @@
           'professional', 'design', 'social', 'video', 'music', 'developer',
           'messaging', 'gaming', 'creator', 'ecommerce', 'photography', 'blogging',
           'miscSocial', 'productivity', 'payment', 'business', 'education', 'pricing',
-          'food', 'transportation', 'travel', 'health', 'ott', 'books', 'contact'
+          'booking', 'food', 'transportation', 'travel', 'health', 'ott', 'books', 'contact'
         ];
 
         categories.forEach(category => {
@@ -827,6 +849,9 @@
       data._comment_pricing = "=== BUSINESS SERVICES & PRICING ===";
       platformGroups.pricing.forEach(p => data[p] = document.getElementById(p)?.value.trim() || "");
 
+      data._comment_booking = "=== BOOKING & ACTIONS ===";
+      platformGroups.booking.forEach(p => data[p] = document.getElementById(p)?.value.trim() || "");
+
       data._comment_food = "=== FOOD & DINING ===";
       platformGroups.food.forEach(p => data[p] = document.getElementById(p)?.value.trim() || "");
 
@@ -867,7 +892,7 @@
         'professional', 'design', 'social', 'video', 'music', 'developer',
         'messaging', 'gaming', 'creator', 'ecommerce', 'photography', 'blogging',
         'miscSocial', 'productivity', 'payment', 'business', 'education', 'pricing',
-        'food', 'transportation', 'travel', 'health', 'ott', 'books', 'contact'
+        'booking', 'food', 'transportation', 'travel', 'health', 'ott', 'books', 'contact'
       ];
 
       categories.forEach(category => {
