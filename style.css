@@ -3201,3 +3201,51 @@ form input::placeholder {
     width: 100%;
   }
 }
+
+/* ===================================
+   MULTILYNKQR SERVICE FOOTER
+   =================================== */
+
+.multilynk-footer {
+  text-align: center;
+  padding: 1.5rem 1rem 0 1rem;
+  margin-top: 2rem;
+  color: var(--gray);
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--border);
+}
+
+.footer-icon-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.footer-icon-link img {
+  width: 1.1em;
+  height: 1.1em;
+  opacity: 0.7;
+  transition: var(--transition);
+  vertical-align: middle;
+}
+
+.footer-icon-link:hover img {
+  opacity: 1;
+  transform: scale(1.16);
+}
+
+/* Mobile responsive for footer */
+@media (max-width: 480px) {
+  .multilynk-footer {
+    font-size: 0.85rem;
+    padding: 1rem 0.5rem 0 0.5rem;
+    gap: 0.4rem;
+  }
+}
