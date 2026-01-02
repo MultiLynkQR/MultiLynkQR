@@ -154,7 +154,12 @@
       <div class="form-section" class="form-section messaging">
         <h3>💬 Messaging & Communication <span class="platform-count">10</span></h3>
         <small>Instant messaging and communication apps</small>
-        <input type="url" id="whatsapp" placeholder="WhatsApp - https://wa.me/phonenumber">
+        <div class="upi-input-group">
+          <input type="text" id="whatsapp"
+            placeholder="WhatsApp - https://wa.me/phonenumber, https://wa.me/phonenumber2">
+          <button type="button" class="add-upi-btn" data-target="whatsapp"
+            title="Add another WhatsApp number">+</button>
+        </div>
         <input type="url" id="telegram" placeholder="Telegram - https://t.me/username">
         <input type="url" id="discord" placeholder="Discord - https://discord.gg/serverinvite or username#0000">
         <input type="url" id="signal" placeholder="Signal - Signal username or phone">

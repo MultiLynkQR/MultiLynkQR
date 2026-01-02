@@ -86,6 +86,19 @@
     </div>
   </div>
 
+  <!-- WhatsApp Selection Overlay -->
+  <div id="whatsappOverlay" class="upi-overlay">
+    <div class="upi-overlay-content">
+      <div class="upi-overlay-header">
+        <h3 id="whatsappOverlayTitle">Select WhatsApp Number</h3>
+        <button class="upi-close-btn" onclick="closeWhatsAppOverlay()">&times;</button>
+      </div>
+      <div class="upi-options" id="whatsappOptions">
+        <!-- WhatsApp options will be populated here -->
+      </div>
+    </div>
+  </div>
+
   <script>
     // Complete platform configuration with 50+ platforms
     const platformConfig = {
@@ -135,7 +148,7 @@
       codepen: { icon: 'codepen', label: 'CodePen', color: '#000000' },
 
       // Messaging & Communication
-      whatsapp: { icon: 'whatsapp', label: 'WhatsApp', color: '#25D366' },
+      whatsapp: { icon: 'whatsapp', label: 'WhatsApp', color: '#25D366', isWhatsApp: true },
       telegram: { icon: 'telegram', label: 'Telegram', color: '#26A5E4' },
       discord: { icon: 'discord', label: 'Discord', color: '#5865F2' },
       signal: { icon: 'signal', label: 'Signal', color: '#3A76F0' },
@@ -540,6 +553,33 @@
                   `);
                 }
                 return; // Skip the regular link creation
+              } else if (config.isWhatsApp) {
+                // Check if there are multiple WhatsApp numbers (comma-separated wa.me URLs)
+                const whatsappUrls = url.split(',').map(u => u.trim()).filter(u => u);
+
+                if (whatsappUrls.length > 1) {
+                  // Multiple WhatsApp numbers - show overlay option
+                  categoryLinks.push(`
+                    <div class="social-link whatsapp-link" onclick="showWhatsAppOverlay('${whatsappUrls.join('|')}', '${config.label}')" title="Click to select ${config.label} number">
+                      <img src="${iconPath}" alt="${config.label}" 
+                           onerror="this.src='./assets/icons/default.svg'" 
+                           style="image-rendering: crisp-edges; -webkit-image-rendering: crisp-edges;">
+                      <span class="link-label">${config.label}</span>
+                      <span class="upi-count-top-right">${whatsappUrls.length}</span>
+                    </div>
+                  `);
+                } else {
+                  // Single WhatsApp number - direct link
+                  categoryLinks.push(`
+                    <a href="${url}" target="_blank" rel="noopener" title="${config.label}" class="social-link">
+                      <img src="${iconPath}" alt="${config.label}" 
+                           onerror="this.src='./assets/icons/default.svg'" 
+                           style="image-rendering: crisp-edges; -webkit-image-rendering: crisp-edges;">
+                      <span class="link-label">${config.label}</span>
+                    </a>
+                  `);
+                }
+                return; // Skip the regular link creation
               }
 
               categoryLinks.push(`
@@ -879,6 +919,55 @@
     document.getElementById('gmapsOverlay').addEventListener('click', function (e) {
       if (e.target === this) {
         closeGmapsOverlay();
+      }
+    });
+
+    // Show WhatsApp overlay for multiple numbers
+    function showWhatsAppOverlay(whatsappUrlsString, platformName) {
+      const whatsappUrls = whatsappUrlsString.split('|').map(url => url.trim()).filter(url => url);
+      const overlay = document.getElementById('whatsappOverlay');
+      const title = document.getElementById('whatsappOverlayTitle');
+      const options = document.getElementById('whatsappOptions');
+
+      title.textContent = `Select ${platformName} Number`;
+      options.innerHTML = '';
+
+      whatsappUrls.forEach((whatsappUrl, index) => {
+        const option = document.createElement('div');
+        option.className = 'upi-option';
+
+        // Extract phone number from wa.me URL for display
+        let phoneNumber = whatsappUrl.replace(/https?:\/\//gi, '').replace(/wa\.me\//gi, '').replace(/api\.whatsapp\.com\/send\?phone=/gi, '').split(/[?&]/)[0];
+        // Add + prefix if not already present
+        if (!phoneNumber.startsWith('+')) {
+          phoneNumber = '+' + phoneNumber;
+        }
+
+        option.innerHTML = `
+          <div class="upi-option-content">
+            <span class="upi-id">${phoneNumber}</span>
+            <span class="upi-index">${index + 1}</span>
+          </div>
+        `;
+        option.onclick = () => {
+          window.open(whatsappUrl, '_blank', 'noopener');
+          closeWhatsAppOverlay();
+        };
+        options.appendChild(option);
+      });
+
+      overlay.style.display = 'flex';
+    }
+
+    // Close WhatsApp overlay
+    function closeWhatsAppOverlay() {
+      document.getElementById('whatsappOverlay').style.display = 'none';
+    }
+
+    // Close WhatsApp overlay when clicking outside
+    document.getElementById('whatsappOverlay').addEventListener('click', function (e) {
+      if (e.target === this) {
+        closeWhatsAppOverlay();
       }
     });
 
