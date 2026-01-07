@@ -936,16 +936,24 @@
         const option = document.createElement('div');
         option.className = 'upi-option';
 
-        // Extract phone number from wa.me URL for display
-        let phoneNumber = whatsappUrl.replace(/https?:\/\//gi, '').replace(/wa\.me\//gi, '').replace(/api\.whatsapp\.com\/send\?phone=/gi, '').split(/[?&]/)[0];
-        // Add + prefix if not already present
-        if (!phoneNumber.startsWith('+')) {
-          phoneNumber = '+' + phoneNumber;
+        let displayText;
+        
+        // Check if it's a channel link
+        if (whatsappUrl.includes('whatsapp.com/channel')) {
+          // For channel links, display the clean URL without https:// and without "+" prefix
+          displayText = whatsappUrl.replace(/https?:\/\//gi, '');
+        } else {
+          // Extract phone number from wa.me URL for display
+          displayText = whatsappUrl.replace(/https?:\/\//gi, '').replace(/wa\.me\//gi, '').replace(/api\.whatsapp\.com\/send\?phone=/gi, '').split(/[?&]/)[0];
+          // Add + prefix if not already present (for phone numbers only)
+          if (!displayText.startsWith('+')) {
+            displayText = '+' + displayText;
+          }
         }
 
         option.innerHTML = `
           <div class="upi-option-content">
-            <span class="upi-id">${phoneNumber}</span>
+            <span class="upi-id">${displayText}</span>
             <span class="upi-index">${index + 1}</span>
           </div>
         `;
