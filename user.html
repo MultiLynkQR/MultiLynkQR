@@ -941,8 +941,15 @@
         // Check if it's a channel link
         if (whatsappUrl.includes('whatsapp.com/channel')) {
           // For channel links, display the clean URL without https:// and without "+" prefix
-          displayText = whatsappUrl.replace(/https?:\/\//gi, '');
-        } else {
+          // displayText = whatsappUrl.replace(/https?:\/\//gi, ''); // or just show as "WhatsApp Channel"
+          displayText = 'WhatsApp Channel';
+        }
+        else if (whatsappUrl.includes('chat.whatsapp.com')) {
+          // For channel links, display the clean URL without https:// and without "+" prefix
+          // displayText = whatsappUrl.replace(/https?:\/\//gi, ''); // or just show as "WhatsApp Group"
+          displayText = 'WhatsApp Group';
+        }
+        else {
           // Extract phone number from wa.me URL for display
           displayText = whatsappUrl.replace(/https?:\/\//gi, '').replace(/wa\.me\//gi, '').replace(/api\.whatsapp\.com\/send\?phone=/gi, '').split(/[?&]/)[0];
           // Add + prefix if not already present (for phone numbers only)
