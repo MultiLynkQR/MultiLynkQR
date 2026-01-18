@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
 </head>
 
@@ -429,31 +430,76 @@
       }
 
       try {
-        // List of data files to search
-        const dataFiles = [
-          './data/personal.json',
-          './data/clients.json',
-          './data/demo.json',
-          // Add more files here as needed: './data/users_location2.json', etc.
-        ];
-
         let user = null;
 
-        // Search for user across all data files
-        for (const file of dataFiles) {
-          try {
-            const res = await fetch(file);
-            if (res.ok) {
-              const users = await res.json();
-              user = users.find(u => u.username === username && u.userCode === userCode);
-              if (user) {
-                console.log(`✅ Found user in ${file}`);
-                break; // Stop searching once user is found
+        // First, load the index to find the correct data file
+        try {
+          const indexRes = await fetch('./data/index.json');
+
+          if (indexRes.ok) {
+            const index = await indexRes.json();
+            const dataFile = index[userCode];
+
+            if (dataFile) {
+              // Found the data file path in index
+              const dataFilePath = `./data/${dataFile}`;
+              console.log(`📋 Index lookup: ${userCode} → ${dataFile}`);
+
+              try {
+                const res = await fetch(dataFilePath);
+                if (res.ok) {
+                  const users = await res.json();
+                  user = users.find(u => u.username === username && u.userCode === userCode);
+                  if (user) {
+                    console.log(`✅ Found user in ${dataFile}`);
+                  }
+                }
+              } catch (fileErr) {
+                console.log(`⚠️ Error loading ${dataFile}:`, fileErr.message);
+              }
+            } else {
+              console.log(`⚠️ UserCode ${userCode} not found in index`);
+            }
+          } else {
+            console.log('⚠️ Index file not found, falling back to sequential search');
+            // Fallback: search all files if index doesn't exist
+            const dataFiles = DATA_FILES_CONFIG.files;
+
+            for (const file of dataFiles) {
+              try {
+                const res = await fetch(file);
+                if (res.ok) {
+                  const users = await res.json();
+                  user = users.find(u => u.username === username && u.userCode === userCode);
+                  if (user) {
+                    console.log(`✅ Found user in ${file} (fallback)`);
+                    break;
+                  }
+                }
+              } catch (fileErr) {
+                console.log(`⚠️ Error searching ${file}:`, fileErr.message);
               }
             }
-          } catch (fileErr) {
-            console.log(`⚠️ Error searching ${file}:`, fileErr.message);
-            // Continue searching other files
+          }
+        } catch (indexErr) {
+          console.log('⚠️ Error loading index, falling back to sequential search:', indexErr.message);
+          // Fallback: search all files if index loading fails
+          const dataFiles = DATA_FILES_CONFIG.files;
+
+          for (const file of dataFiles) {
+            try {
+              const res = await fetch(file);
+              if (res.ok) {
+                const users = await res.json();
+                user = users.find(u => u.username === username && u.userCode === userCode);
+                if (user) {
+                  console.log(`✅ Found user in ${file} (fallback)`);
+                  break;
+                }
+              }
+            } catch (fileErr) {
+              console.log(`⚠️ Error searching ${file}:`, fileErr.message);
+            }
           }
         }
 

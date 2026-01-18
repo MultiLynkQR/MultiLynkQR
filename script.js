@@ -30,13 +30,8 @@ const QR_PADDING_CONFIG = {
 // Load users from multiple JSON files for QR modal
 async function loadUsersForQR(username, userCode) {
   try {
-    // List of data files to load (same as loadUsers)
-    const dataFiles = [
-      './data/personal.json',
-      './data/clients.json',
-      './data/demo.json',
-      // Add more files here as needed: './data/users_location2.json', etc.
-    ];
+    // List of data files to load (using centralized config)
+    const dataFiles = DATA_FILES_CONFIG.files;
 
     const allUsers = [];
 
@@ -180,13 +175,75 @@ async function loadUsers() {
   const userDataFile = sessionStorage.getItem('adminDataFile');
 
   try {
-    if (userRole === 'main_admin') {
+    if (userRole === 'super_admin') {
+      // Super admin users see all users from all files using index.json
+      console.log('🔑 Super Admin Login - Loading all users from index');
+
+      try {
+        // Load index.json to get all data files
+        const indexRes = await fetch('./data/index.json');
+        if (!indexRes.ok) {
+          throw new Error('Index file not found');
+        }
+
+        const index = await indexRes.json();
+
+        // Get unique data files from index
+        const dataFiles = [...new Set(Object.values(index))];
+        console.log(`📁 Found ${dataFiles.length} data files in index:`, dataFiles);
+
+        const allUsers = [];
+
+        // Load all unique data files
+        for (const file of dataFiles) {
+          try {
+            const res = await fetch(`./data/${file}`);
+            if (res.ok) {
+              const users = await res.json();
+              allUsers.push(...users);
+              console.log(`✅ Loaded ${users.length} users from ${file}`);
+            } else {
+              console.log(`⚠️ File not found: ${file}`);
+            }
+          } catch (fileErr) {
+            console.log(`⚠️ Error loading ${file}:`, fileErr.message);
+          }
+        }
+
+        console.log(`📊 Total users loaded: ${allUsers.length}`);
+        allUsersGlobal = allUsers;
+        showUserUI(); // Show user UI for browsing all users
+        displayUsers(allUsers);
+        updateUserStatistics(allUsers);
+
+      } catch (indexErr) {
+        console.error('Error loading index, falling back to hardcoded files:', indexErr);
+        // Fallback to hardcoded files if index fails
+        const dataFiles = DATA_FILES_CONFIG.files;
+
+        const allUsers = [];
+        for (const file of dataFiles) {
+          try {
+            const res = await fetch(file);
+            if (res.ok) {
+              const users = await res.json();
+              allUsers.push(...users);
+              console.log(`✅ Loaded ${users.length} users from ${file} (fallback)`);
+            }
+          } catch (fileErr) {
+            console.log(`⚠️ Error loading ${file}:`, fileErr.message);
+          }
+        }
+
+        allUsersGlobal = allUsers;
+        showUserUI();
+        displayUsers(allUsers);
+        updateUserStatistics(allUsers);
+      }
+
+    } else if (userRole === 'main_admin') {
       // Admin users see all data and admin statistics
-      const dataFiles = [
-        './data/personal.json',
-        './data/clients.json',
-        './data/demo.json',
-      ];
+      const dataFiles = DATA_FILES_CONFIG.files;
 
       const allUsers = [];
 
