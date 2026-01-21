@@ -604,6 +604,14 @@ button[type="submit"] {
   border-radius: 8px;
 }
 
+/* Fix for QR Code in user.html overlay */
+#qrCodeContainer img {
+  max-width: 300px;
+  height: auto;
+  border-radius: 8px;
+  display: block;
+}
+
 .qr-url {
   color: var(--primary);
   font-size: 0.875rem;
