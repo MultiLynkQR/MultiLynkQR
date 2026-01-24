@@ -37,6 +37,7 @@ Create digital business cards with QR codes supporting **175+ platforms**. Perfe
 - **Global Platforms**: LinkedIn, GitHub, Instagram, YouTube, etc.
 - **Indian Platforms**: Swiggy, Zomato, PhonePe, Razorpay, etc.
 - **Custom Certificates**: Add unlimited certificates with custom titles
+- **Forms**: Add unlimited forms (Google Forms, surveys, questionnaires) with custom titles
 
 ### Advanced Features
 - **Multiple UPI IDs**: Support for multiple payment IDs per platform
@@ -146,6 +147,7 @@ Organize your client data into folders for better structure. The system automati
 - 📚 Books & Reading (1 platform)
 - 🎬 Entertainment & OTT (8 platforms)
 - 🎓 Certificates & Credentials (unlimited)
+- 📋 Forms (unlimited)
 - 📞 Contact Information (6 fields)
 
 ## 🔗 **Navigation**

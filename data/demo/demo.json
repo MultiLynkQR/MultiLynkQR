@@ -235,6 +235,18 @@
         }
         ],
 
+        "_comment_googleForms": "=== GOOGLE FORMS ===",
+        "googleForms": [
+        {
+            "title": "Feedback",
+            "url": "https://google.com"
+        },
+        {
+            "title": "Hello World",
+            "url": "https://google.com"
+        }
+        ],
+
         "_comment_contact": "=== CONTACT INFORMATION ===",
         "email": "mohammedrehanalam16@gmail.com",
         "phone": "+910123456789",

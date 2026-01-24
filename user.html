@@ -350,6 +350,9 @@
       // Books & Reading
       goodreads: { icon: 'goodreads', label: 'Goodreads', color: '#553B08' },
 
+      // Google Forms
+      googleforms: { icon: 'googleforms', label: 'Google Form', color: '#673AB7' },
+
       // Film & TV
       imdb: { icon: 'imdb', label: 'IMDb', color: '#F5C518' },
 
@@ -879,6 +882,26 @@
                 </div>
               </div>
             `;
+          }
+
+          // Insert Forms section right after Booking & Actions
+          if (categoryName === '📅 Booking & Actions' && user.googleForms && Array.isArray(user.googleForms) && user.googleForms.length > 0) {
+            linksDiv.innerHTML += `
+              <div class="category-section">
+                <h3 class="category-title">📋 Forms</h3>
+                <div class="category-links">
+                  ${user.googleForms.map(form => `
+                    <a href="${form.url}" target="_blank" rel="noopener" title="${form.title}" class="social-link">
+                      <img src="./assets/icons/googleforms.svg" alt="Form" 
+                           onerror="this.src='./assets/icons/default.svg'" 
+                           style="image-rendering: crisp-edges; -webkit-image-rendering: crisp-edges;">
+                      <span class="link-label">${form.title}</span>
+                    </a>
+                  `).join('')}
+                </div>
+              </div>
+            `;
+            linkCount += user.googleForms.length;
           }
         });
 

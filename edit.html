@@ -379,19 +379,6 @@
         </button>
       </div>
 
-      <!-- Certificates & Credentials -->
-      <div class="form-section certificates">
-        <h3>🎓 Certificates & Credentials <span class="platform-count" id="cert-count">0</span></h3>
-        <small>Add your certificates, credentials, and achievements with custom titles</small>
-
-        <div id="certificates-container">
-          <!-- Certificate entries will be added here dynamically -->
-        </div>
-
-        <button type="button" class="add-certificate-btn" onclick="addCertificateEntry()">
-          ➕ Add Certificate
-        </button>
-      </div>
 
       <!-- Business Services & Pricing -->
       <div class="form-section pricing">
@@ -438,6 +425,20 @@
         <div id="booking-custom-container" class="custom-links-container"></div>
         <button type="button" class="add-certificate-btn" onclick="addCustomLink('booking', '📅 Booking')">
           ➕ Add Custom Link
+        </button>
+      </div>
+
+      <!-- Forms -->
+      <div class="form-section googleforms">
+        <h3>📋 Forms <span class="platform-count" id="googleforms-count">0</span></h3>
+        <small>Add your Google Forms, surveys, and questionnaires with custom titles</small>
+
+        <div id="googleforms-container">
+          <!-- Google Form entries will be added here dynamically -->
+        </div>
+
+        <button type="button" class="add-certificate-btn" onclick="addGoogleFormEntry()">
+          ➕ Add Form
         </button>
       </div>
 
@@ -536,6 +537,20 @@
         <div id="books-custom-container" class="custom-links-container"></div>
         <button type="button" class="add-certificate-btn" onclick="addCustomLink('books', '📚 Books')">
           ➕ Add Custom Link
+        </button>
+      </div>
+
+      <!-- Certificates & Credentials -->
+      <div class="form-section certificates">
+        <h3>🎓 Certificates & Credentials <span class="platform-count" id="cert-count">0</span></h3>
+        <small>Add your certificates, credentials, and achievements with custom titles</small>
+
+        <div id="certificates-container">
+          <!-- Certificate entries will be added here dynamically -->
+        </div>
+
+        <button type="button" class="add-certificate-btn" onclick="addCertificateEntry()">
+          ➕ Add Certificate
         </button>
       </div>
 
@@ -819,6 +834,11 @@
           loadCertificates(user.certificates);
         }
 
+        // Load Google Forms if they exist
+        if (user.googleForms) {
+          loadGoogleForms(user.googleForms);
+        }
+
         // Load custom links for all categories
         const categories = [
           'professional', 'design', 'social', 'video', 'music', 'developer',
@@ -952,6 +972,23 @@
         });
       }
 
+      // Collect Google Forms
+      const googleForms = [];
+      const googleFormsContainer = document.getElementById('googleforms-container');
+      if (googleFormsContainer) {
+        googleFormsContainer.querySelectorAll('.googleform-entry').forEach(entry => {
+          const titleInput = entry.querySelector('.googleform-title');
+          const urlInput = entry.querySelector('.googleform-url');
+
+          if (titleInput && urlInput && titleInput.value.trim() && urlInput.value.trim()) {
+            googleForms.push({
+              title: titleInput.value.trim(),
+              url: urlInput.value.trim()
+            });
+          }
+        });
+      }
+
       // Collect custom links for each category
       const categories = [
         'professional', 'design', 'social', 'video', 'music', 'developer',
@@ -985,6 +1022,12 @@
       data._comment_certificates = "=== CERTIFICATES & CREDENTIALS ===";
       if (certificates.length > 0) {
         data.certificates = certificates;
+      }
+
+      // Always include Google Forms comment section for consistency
+      data._comment_googleforms = "=== GOOGLE FORMS ===";
+      if (googleForms.length > 0) {
+        data.googleForms = googleForms;
       }
 
       data._comment_contact = "=== CONTACT INFORMATION ===";
@@ -1218,6 +1261,69 @@
         const lastId = certificateCounter;
         document.getElementById(`cert-title-${lastId}`).value = cert.title || '';
         document.getElementById(`cert-url-${lastId}`).value = cert.url || '';
+      });
+    }
+
+    // Google Forms Management Functions
+    let googleFormCounter = 0;
+
+    function addGoogleFormEntry() {
+      googleFormCounter++;
+      const container = document.getElementById('googleforms-container');
+
+      const formEntry = document.createElement('div');
+      formEntry.className = 'googleform-entry certificate-entry';
+      formEntry.id = `googleform-entry-${googleFormCounter}`;
+      formEntry.innerHTML = `
+        <div class="cert-inputs">
+          <input type="text" 
+                 class="googleform-title cert-title" 
+                 id="googleform-title-${googleFormCounter}" 
+                 placeholder="Form Title (e.g., Customer Feedback Survey)"
+                 required>
+          <input type="url" 
+                 class="googleform-url cert-url" 
+                 id="googleform-url-${googleFormCounter}" 
+                 placeholder="Google Form URL (e.g., https://forms.gle/abc123)"
+                 required>
+          <button type="button" 
+                  class="remove-cert-btn" 
+                  onclick="removeGoogleFormEntry(${googleFormCounter})"
+                  title="Remove this form">
+            ✖
+          </button>
+        </div>
+      `;
+
+      container.appendChild(formEntry);
+      updateGoogleFormCount();
+
+      // Focus on the title input
+      document.getElementById(`googleform-title-${googleFormCounter}`).focus();
+    }
+
+    function removeGoogleFormEntry(id) {
+      const entry = document.getElementById(`googleform-entry-${id}`);
+      if (entry) {
+        entry.remove();
+        updateGoogleFormCount();
+      }
+    }
+
+    function updateGoogleFormCount() {
+      const count = document.querySelectorAll('.googleform-entry').length;
+      document.getElementById('googleforms-count').textContent = count;
+    }
+
+    // Load existing Google Forms when editing
+    function loadGoogleForms(googleForms) {
+      if (!googleForms || !Array.isArray(googleForms)) return;
+
+      googleForms.forEach(form => {
+        addGoogleFormEntry();
+        const lastId = googleFormCounter;
+        document.getElementById(`googleform-title-${lastId}`).value = form.title || '';
+        document.getElementById(`googleform-url-${lastId}`).value = form.url || '';
       });
     }
 
