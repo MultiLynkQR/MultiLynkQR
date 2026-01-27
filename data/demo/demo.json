@@ -52,11 +52,11 @@
         "codepen": "https://google.com",
 
         "_comment_messaging": "=== MESSAGING & COMMUNICATION ===",
-        "whatsapp": "https://wa.me/917036412617",
-        "telegram": "https://t.me/MohammedRehanAlam",
-        "discord": "https://discord.gg/mohammedrehanalam",
-        "signal": "https://signal.me/#p/+1234567890",
-        "skype": "https://skype.com/mohammedrehanalam",
+        "whatsapp": "https://google.com",
+        "telegram": "https://google.com",
+        "discord": "https://google.com",
+        "signal": "https://google.com",
+        "skype": "https://google.com",
         "slack": "https://google.com",
         "wechat": "https://google.com",
         "line": "https://google.com",
@@ -248,7 +248,7 @@
         ],
 
         "_comment_contact": "=== CONTACT INFORMATION ===",
-        "email": "mohammedrehanalam16@gmail.com",
+        "email": "mohammedrehanalam_example@gmail.com",
         "phone": "+910123456789",
         "website": "https://google.com",
         "businesscard": "https://google.com",
@@ -271,8 +271,8 @@
         "instagram": "https://google.com",
         "googleReview": "https://google.com",
         "_comment_appDownloads": "=== APP DOWNLOADS ===",
-        "playstore": "https://play.google.com/store/apps/details?id=com.restaurant.app",
-        "appstore": "https://apps.apple.com/us/app/restaurant-app/id123456789",
+        "playstore": "https://google.com",
+        "appstore": "https://google.com",
         "_comment_booking": "=== BOOKING ===",
         "reservation": "https://google.com"
     },
@@ -304,8 +304,8 @@
         "location": "https://google.com",
         "phone": "+919876543210",
         "_comment_appDownloads": "=== APP DOWNLOADS ===",
-        "playstore": "https://play.google.com/store/apps/details?id=com.retail.app",
-        "appstore": "https://apps.apple.com/us/app/retail-app/id123456789"
+        "playstore": "https://google.com",
+        "appstore": "https://google.com"
     },
     {
         "username": "freelancer",
@@ -336,8 +336,8 @@
         "googleReview": "https://google.com",
         "calendly": "https://google.com",
         "_comment_appDownloads": "=== APP DOWNLOADS ===",
-        "playstore": "https://play.google.com/store/apps/details?id=com.medical.app",
-        "appstore": "https://apps.apple.com/us/app/medical-app/id123456789",
+        "playstore": "https://google.com",
+        "appstore": "https://google.com",
         "_comment_booking": "=== BOOKING ===",
         "appointment": "https://google.com",
         "consultation": "https://google.com",
@@ -395,8 +395,8 @@
         "phone": "+919876543210",
         "googleReview": "https://google.com",
         "_comment_appDownloads": "=== APP DOWNLOADS ===",
-        "playstore": "https://play.google.com/store/apps/details?id=com.gym.app",
-        "appstore": "https://apps.apple.com/us/app/gym-app/id123456789",
+        "playstore": "https://google.com",
+        "appstore": "https://google.com",
         "_comment_booking": "=== BOOKING ===",
         "registration": "https://google.com",
         "bookingpage": "https://google.com",
@@ -430,8 +430,8 @@
         "location": "https://google.com",
         "phone": "+919876543210",
         "_comment_appDownloads": "=== APP DOWNLOADS ===",
-        "playstore": "https://play.google.com/store/apps/details?id=com.event.app",
-        "appstore": "https://apps.apple.com/us/app/event-app/id123456789",
+        "playstore": "https://google.com",
+        "appstore": "https://google.com",
         "_comment_booking": "=== BOOKING ===",
         "buytickets": "https://google.com",
         "registration": "https://google.com"
@@ -553,8 +553,8 @@
         "instagram": "https://google.com",
         "twitter": "https://google.com",
         "_comment_appDownloads": "=== APP DOWNLOADS ===",
-        "playstore": "https://play.google.com/store/apps/details?id=com.game.app",
-        "appstore": "https://apps.apple.com/us/app/game-app/id123456789"
+        "playstore": "https://google.com",
+        "appstore": "https://google.com"
     },
     {
         "username": "writer",
@@ -695,8 +695,8 @@
         "facebook": "https://google.com",
         "email": "travel@google.com",
         "_comment_appDownloads": "=== APP DOWNLOADS ===",
-        "playstore": "https://play.google.com/store/apps/details?id=com.travel.app",
-        "appstore": "https://apps.apple.com/us/app/travel-app/id123456789"
+        "playstore": "https://google.com",
+        "appstore": "https://google.com"
     },
     {
         "username": "charity",
@@ -949,8 +949,8 @@
         "email": "admissions@google.com",
         "googleReview": "https://google.com",
         "_comment_appDownloads": "=== APP DOWNLOADS ===",
-        "playstore": "https://play.google.com/store/apps/details?id=com.school.app",
-        "appstore": "https://apps.apple.com/us/app/school-app/id123456789",
+        "playstore": "https://google.com",
+        "appstore": "https://google.com",
         "_comment_booking": "=== BOOKING ===",
         "appointment": "https://google.com",
         "registration": "https://google.com",
@@ -985,8 +985,8 @@
         "email": "info@google.com",
         "phone": "+919876543210",
         "_comment_appDownloads": "=== APP DOWNLOADS ===",
-        "playstore": "https://play.google.com/store/apps/details?id=com.university.app",
-        "appstore": "https://apps.apple.com/us/app/university-app/id123456789",
+        "playstore": "https://google.com",
+        "appstore": "https://google.com",
         "_comment_booking": "=== BOOKING ===",
         "appointment": "https://google.com",
         "registration": "https://google.com",
@@ -1064,57 +1064,53 @@
     {
         "username": "nutritionist",
         "fullname": "Nutritionist",
-        "publicDescription": "Certified Nutritionist - Your Partner in Health & Wellness",
         "userCode": "NUT2024",
-        "_comment_health": "=== NUTRITION ===",
-        "website": "https://google.com",
+        "publicDescription": "Certified Nutritionist - Your Partner in Health & Wellness",
         "instagram": "https://google.com",
-        "practo": "https://google.com",
-        "calendly": "https://google.com",
-        "phone": "+919876543210",
-        "email": "nutrition@google.com",
-        "whatsapp": "https://google.com",
         "youtube": "https://google.com",
-        "_comment_booking": "=== BOOKING ===",
+        "whatsapp": "https://google.com",
+        "calendly": "https://google.com",
         "appointment": "https://google.com",
         "consultation": "https://google.com",
+        "practo": "https://google.com",
         "certificates": [
             {
-                "title": "Certified Nutritionist",
-                "link": "https://google.com"
+            "title": "Certified Nutritionist",
+            "url": "https://google.com"
             },
             {
-                "title": "Sports Nutrition Specialist",
-                "link": "https://google.com"
+            "title": "Sports Nutrition Specialist",
+            "url": "https://google.com"
             }
-        ]
+        ],
+        "email": "nutrition@google.com",
+        "phone": "+919876543210",
+        "website": "https://google.com"
     },
     {
         "username": "psychologist",
         "fullname": "Psychologist",
-        "publicDescription": "Licensed Clinical Psychologist - Mental Health Support & Therapy",
         "userCode": "PSY2024",
-        "_comment_health": "=== MENTAL HEALTH ===",
-        "website": "https://google.com",
-        "practo": "https://google.com",
-        "calendly": "https://google.com",
+        "publicDescription": "Licensed Clinical Psychologist - Mental Health Support & Therapy",
         "linkedin": "https://google.com",
-        "phone": "+919876543210",
-        "email": "therapy@google.com",
-        "location": "https://google.com",
-        "_comment_booking": "=== BOOKING ===",
+        "calendly": "https://google.com",
         "appointment": "https://google.com",
         "consultation": "https://google.com",
+        "practo": "https://google.com",
         "certificates": [
             {
-                "title": "Licensed Clinical Psychologist",
-                "link": "https://google.com"
+            "title": "Licensed Clinical Psychologist",
+            "url": "https://google.com"
             },
             {
-                "title": "CBT Certified",
-                "link": "https://google.com"
+            "title": "CBT Certified",
+            "url": "https://google.com"
             }
-        ]
+        ],
+        "email": "therapy@google.com",
+        "phone": "+919876543210",
+        "website": "https://google.com",
+        "location": "https://google.com"
     },
     {
         "username": "hotel",
@@ -1130,8 +1126,8 @@
         "email": "reservations@google.com",
         "googleReview": "https://google.com",
         "_comment_appDownloads": "=== APP DOWNLOADS ===",
-        "playstore": "https://play.google.com/store/apps/details?id=com.hotel.app",
-        "appstore": "https://apps.apple.com/us/app/hotel-app/id123456789",
+        "playstore": "https://google.com",
+        "appstore": "https://google.com",
         "_comment_booking": "=== BOOKING ===",
         "reservation": "https://google.com",
         "bookingpage": "https://google.com"
@@ -1151,8 +1147,8 @@
         "facebook": "https://google.com",
         "website": "https://google.com",
         "_comment_appDownloads": "=== APP DOWNLOADS ===",
-        "playstore": "https://play.google.com/store/apps/details?id=com.cafe.app",
-        "appstore": "https://apps.apple.com/us/app/cafe-app/id123456789"
+        "playstore": "https://google.com",
+        "appstore": "https://google.com"
     },
     {
         "username": "cardealer",
@@ -1214,8 +1210,8 @@
         "tiktok": "https://google.com",
         "email": "team@google.com",
         "_comment_appDownloads": "=== APP DOWNLOADS ===",
-        "playstore": "https://play.google.com/store/apps/details?id=com.sportsteam.app",
-        "appstore": "https://apps.apple.com/us/app/sportsteam-app/id123456789"
+        "playstore": "https://google.com",
+        "appstore": "https://google.com"
     },
     {
         "username": "newsagency",
@@ -1231,8 +1227,8 @@
         "linkedin": "https://google.com",
         "email": "news@google.com",
         "_comment_appDownloads": "=== APP DOWNLOADS ===",
-        "playstore": "https://play.google.com/store/apps/details?id=com.news.app",
-        "appstore": "https://apps.apple.com/us/app/news-app/id123456789"
+        "playstore": "https://google.com",
+        "appstore": "https://google.com"
     },
     {
         "username": "appdev",
@@ -1240,8 +1236,8 @@
         "publicDescription": "Creating useful apps for your daily life. Download now!",
         "userCode": "APP2024",
         "_comment_appDownloads": "=== APP DOWNLOADS ===",
-        "playstore": "https://play.google.com/store/apps/details?id=com.example.app",
-        "appstore": "https://apps.apple.com/us/app/example-app/id123456789",
+        "playstore": "https://google.com",
+        "appstore": "https://google.com",
         "website": "https://google.com",
         "twitter": "https://google.com",
         "github": "https://google.com"
@@ -1253,7 +1249,7 @@
         "publicDescription": "Apple weds Custardapple",
         "upi": "7036412617, mohammedrehanalam16-2@okaxis",
         "phone": "+910123456789",
-        "location": "https://maps.app.goo.gl/3HCnf6cTUjNdNykG8"
+        "location": "https://google.com"
     },
     {
         "username": "birthdayparty",
@@ -1281,8 +1277,8 @@
         "email": "launch@google.com",
         "phone": "+919876543210",
         "_comment_appDownloads": "=== APP DOWNLOADS ===",
-        "playstore": "https://play.google.com/store/apps/details?id=com.product.app",
-        "appstore": "https://apps.apple.com/us/app/product-app/id123456789",
+        "playstore": "https://google.com",
+        "appstore": "https://google.com",
         "_comment_booking": "=== BOOKING ===",
         "registration": "https://google.com",
         "buytickets": "https://google.com"
@@ -1403,8 +1399,8 @@
         "amazon": "https://google.com",
         "flipkart": "https://google.com",
         "pricelist": "https://google.com",
-        "playstore": "https://play.google.com/store/apps/details?id=com.yourapp.example",
-        "appstore": "https://apps.apple.com/us/app/yourapp/id123456789",
+        "playstore": "https://google.com",
+        "appstore": "https://google.com",
         "bookingpage": "https://google.com",
         "appointment": "https://google.com",
         "registration": "https://google.com",

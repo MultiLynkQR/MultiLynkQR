@@ -16,7 +16,23 @@ let qrCustomization = {
   gradientColor1: '#000000',
   gradientColor2: '#6366f1',
   gradientDirection: 'horizontal',
-  spacing: 16
+  gradientColor2: '#6366f1',
+  gradientDirection: 'horizontal',
+  spacing: 16,
+  logoOption: 'none', // 'none' or 'image'
+  logoData: null, // Data URL of the logo image
+  logoBgOption: 'match', // 'match' or 'custom'
+  logoBgColor: '#ffffff',
+  logoBgOption: 'match', // 'match' or 'custom'
+  logoBgColor: '#ffffff',
+  logoBgTransparent: false,
+  logoBgOption: 'match', // 'match' or 'custom'
+  logoBgColor: '#ffffff',
+  logoBgTransparent: false,
+  logoCornerRadius: 0.2, // Active radius
+  logoRadiusMode: 'auto', // 'auto' or 'manual'
+  logoManualRadius: 0.2,
+  detectedLogoRadius: 0.2
 };
 
 // QR Padding Configuration - single source of truth
@@ -660,6 +676,13 @@ function showQR(username, userCode) {
 
   // Setup download options
   setupDownloadOptions();
+
+  // Ensure QR matches current customization (fixes default state issue)
+  // We need to wait for modal to be visible for canvas to render correctly if needed,
+  // but mostly just to ensure data is ready.
+  setTimeout(() => {
+    updateQRDisplay();
+  }, 10);
 }
 
 // Setup download options for PNG and SVG
@@ -751,9 +774,47 @@ function downloadQRPNG(username, userCode, size = 512) {
   const availableSize = size - (padding * 2);
   const moduleSize = availableSize / moduleCount;
 
+  // Calculate Logo Area (for exclusion)
+  let logoStartPos = -1;
+  let logoEndPos = -1;
+
+  if (qrCustomization.logoOption === 'image') {
+    const centerStart = Math.floor(moduleCount * (1 - 0.22) / 2);
+    const centerEnd = Math.ceil(moduleCount * (1 + 0.22) / 2);
+    logoStartPos = centerStart;
+    logoEndPos = centerEnd;
+  }
+
   // Draw QR code modules with custom colors and styles
   for (let row = 0; row < moduleCount; row++) {
     for (let col = 0; col < moduleCount; col++) {
+
+      // Skip modules in logo area
+      // Skip modules in logo area
+      if (logoStartPos !== -1) {
+        // Smart exclusion: Check shape
+        if (qrCustomization.logoCornerRadius > 0.4) {
+          // Circular Exclusion
+          const centerX = moduleCount / 2;
+          const centerY = moduleCount / 2;
+          const modCenterX = col + 0.5;
+          const modCenterY = row + 0.5;
+          const dist = Math.sqrt(Math.pow(modCenterX - centerX, 2) + Math.pow(modCenterY - centerY, 2));
+
+          // Limit radius: logo is 0.22 of full size.
+          const limitRadius = (moduleCount * 0.22) / 2;
+
+          if (dist < limitRadius + 0.5) {
+            continue;
+          }
+        } else {
+          // Square Exclusion
+          if (row >= logoStartPos && row < logoEndPos && col >= logoStartPos && col < logoEndPos) {
+            continue;
+          }
+        }
+      }
+
       if (qr.isDark(row, col)) {
         drawQRModule(
           ctx,
@@ -767,17 +828,105 @@ function downloadQRPNG(username, userCode, size = 512) {
     }
   }
 
-  // Download as PNG with unique filename: username_userCode_QR_size.png
-  canvas.toBlob((blob) => {
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.download = `${username}_${userCode}_QR_${size}x${size}.png`;
-    link.href = url;
-    link.click();
+  // Function to finalize download
+  const finishDownload = () => {
+    canvas.toBlob((blob) => {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.download = `${username}_${userCode}_QR_${size}x${size}.png`;
+      link.href = url;
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 100);
+    }, 'image/png');
+  };
 
-    // Clean up
-    setTimeout(() => URL.revokeObjectURL(url), 100);
-  }, 'image/png');
+  // Handle Logo
+  if (qrCustomization.logoOption === 'image') {
+    const logoSize = size * 0.22;
+    const logoX = (size - logoSize) / 2;
+    const logoY = (size - logoSize) / 2;
+
+    // Draw background logic for logo
+    let drawLogoBg = false;
+    let logoBgFill = qrCustomization.backgroundColor;
+
+    if (qrCustomization.logoBgOption === 'custom') {
+      if (qrCustomization.logoBgTransparent) {
+        drawLogoBg = false;
+      } else {
+        drawLogoBg = true;
+        logoBgFill = qrCustomization.logoBgColor;
+      }
+    } else {
+      // Match -> No draw (main BG shows)
+      drawLogoBg = false;
+    }
+
+    if (drawLogoBg) {
+      ctx.fillStyle = logoBgFill;
+      const cornerRadius = logoSize * qrCustomization.logoCornerRadius;
+      ctx.beginPath();
+      ctx.roundRect(logoX, logoY, logoSize, logoSize, cornerRadius);
+      ctx.fill();
+    }
+
+    if (qrCustomization.logoData) {
+      const img = new Image();
+      img.onload = () => {
+        const imgPadding = logoSize * 0.02; // 2% padding
+        const imgSize = logoSize - imgPadding * 2;
+        const imgX = logoX + imgPadding;
+        const imgY = logoY + imgPadding;
+
+        ctx.save();
+        ctx.beginPath();
+        // User requested: "make it automatically follow this radius parameter"
+        // referring to cornerRadius = logoSize * 0.2
+        const imgCornerRadius = logoSize * 0.2;
+        ctx.roundRect(imgX, imgY, imgSize, imgSize, imgCornerRadius);
+        ctx.clip();
+
+        ctx.drawImage(img, imgX, imgY, imgSize, imgSize);
+        ctx.restore();
+
+        finishDownload();
+      };
+      img.onerror = finishDownload; // Proceed anyway on error
+      img.src = qrCustomization.logoData;
+      return; // Wait for load
+    } else {
+      // Draw placeholder
+      // Only draw default gray box if we didn't already draw a custom background!
+      if (!drawLogoBg) {
+        ctx.fillStyle = '#f3f4f6';
+        const cornerRadius = logoSize * 0.2; // 20% corner radius
+        ctx.beginPath();
+        ctx.roundRect(logoX, logoY, logoSize, logoSize, cornerRadius);
+        ctx.fill();
+      }
+
+      ctx.strokeStyle = '#d1d5db';
+      ctx.lineWidth = size * 0.005;
+      // Ensure path exists for stroke if we skipped fill above
+      if (drawLogoBg) {
+        const cornerRadius = logoSize * 0.2;
+        ctx.beginPath();
+        ctx.roundRect(logoX, logoY, logoSize, logoSize, cornerRadius);
+      }
+      ctx.stroke();
+
+      // Draw "LOGO" text
+      ctx.font = `bold ${logoSize * 0.25}px sans-serif`;
+      ctx.fillStyle = '#9ca3af';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('LOGO', size / 2, size / 2);
+
+      finishDownload();
+    }
+  } else {
+    finishDownload();
+  }
 }
 
 // Download QR Code as SVG
@@ -1236,6 +1385,7 @@ function drawQRModule(ctx, x, y, width, height, style) {
   }
 }
 
+
 function updateQRDisplay() {
   const qrContainer = document.getElementById('qrContainer');
   const qrImg = qrContainer.querySelector('img');
@@ -1247,7 +1397,6 @@ function updateQRDisplay() {
   const ctx = canvas.getContext('2d');
 
   // Use higher resolution for better quality (4x the display size)
-  const displaySize = 200; // What we want to display
   const canvasSize = 800; // High quality canvas size
   canvas.width = canvasSize;
   canvas.height = canvasSize;
@@ -1260,7 +1409,7 @@ function updateQRDisplay() {
   // Get QR data and regenerate
   const qrUrl = document.getElementById('qrUrl').textContent;
   const typeNumber = 0;
-  const errorCorrectionLevel = 'H';
+  const errorCorrectionLevel = 'H'; // High error correction for logo support
   const qr = qrcode(typeNumber, errorCorrectionLevel);
   qr.addData(qrUrl);
   qr.make();
@@ -1272,9 +1421,48 @@ function updateQRDisplay() {
   const availableSize = canvasSize - (padding * 2);
   const moduleSize = availableSize / moduleCount;
 
+  // Calculate Logo Area (for exclusion)
+  let logoStartPos = -1;
+  let logoEndPos = -1;
+
+  if (qrCustomization.logoOption === 'image') {
+    const centerStart = Math.floor(moduleCount * (1 - 0.22) / 2);
+    const centerEnd = Math.ceil(moduleCount * (1 + 0.22) / 2);
+    logoStartPos = centerStart;
+    logoEndPos = centerEnd;
+  }
+
   // Draw QR code modules with custom colors and styles
   for (let row = 0; row < moduleCount; row++) {
     for (let col = 0; col < moduleCount; col++) {
+
+      // Skip modules in logo area
+      // Skip modules in logo area
+      if (logoStartPos !== -1) {
+        // Smart exclusion: Check shape
+        if (qrCustomization.logoCornerRadius > 0.4) {
+          // Circular Exclusion
+          const centerX = moduleCount / 2;
+          const centerY = moduleCount / 2;
+          const modCenterX = col + 0.5;
+          const modCenterY = row + 0.5;
+          const dist = Math.sqrt(Math.pow(modCenterX - centerX, 2) + Math.pow(modCenterY - centerY, 2));
+
+          // Limit radius: logo is 0.22 of full size. In modules:
+          const limitRadius = (moduleCount * 0.22) / 2;
+
+          // Add slight padding (0.5 module) to not touch logo edge
+          if (dist < limitRadius + 0.5) {
+            continue;
+          }
+        } else {
+          // Square Exclusion
+          if (row >= logoStartPos && row < logoEndPos && col >= logoStartPos && col < logoEndPos) {
+            continue;
+          }
+        }
+      }
+
       if (qr.isDark(row, col)) {
         drawQRModule(
           ctx,
@@ -1285,6 +1473,98 @@ function updateQRDisplay() {
           qrCustomization.qrStyle
         );
       }
+    }
+  }
+
+  // Handle Logo Drawing
+  if (qrCustomization.logoOption === 'image') {
+    const logoSize = canvasSize * 0.22; // 22% of QR size
+    const logoX = (canvasSize - logoSize) / 2;
+    const logoY = (canvasSize - logoSize) / 2;
+
+    // Draw background logic for logo
+    let drawLogoBg = false;
+    let logoBgFill = qrCustomization.backgroundColor; // Default to Match
+
+    if (qrCustomization.logoBgOption === 'custom') {
+      if (qrCustomization.logoBgTransparent) {
+        // Transparent custom means DON'T draw
+        drawLogoBg = false;
+      } else {
+        drawLogoBg = true;
+        logoBgFill = qrCustomization.logoBgColor;
+      }
+    } else {
+      // Match QR (Default)
+      drawLogoBg = false;
+    }
+
+    if (drawLogoBg) {
+      ctx.fillStyle = logoBgFill;
+      const cornerRadius = logoSize * qrCustomization.logoCornerRadius;
+      ctx.beginPath();
+      // Adjust size slightly to cover module edges if needed, but module grid is clean
+      ctx.roundRect(logoX, logoY, logoSize, logoSize, cornerRadius);
+      ctx.fill();
+    }
+
+    if (qrCustomization.logoData) {
+      const img = new Image();
+      img.onload = () => {
+        // Draw logo image
+        const imgPadding = logoSize * 0.02; // 2% padding
+        const imgSize = logoSize - imgPadding * 2;
+        const imgX = logoX + imgPadding;
+        const imgY = logoY + imgPadding;
+
+        ctx.save();
+        ctx.beginPath();
+        // User requested: "make it automatically follow this radius parameter"
+        // referring to cornerRadius = logoSize * 0.2
+        const imgCornerRadius = logoSize * qrCustomization.logoCornerRadius;
+        ctx.roundRect(imgX, imgY, imgSize, imgSize, imgCornerRadius);
+        ctx.clip();
+
+        ctx.drawImage(img, imgX, imgY, imgSize, imgSize);
+        ctx.restore();
+
+        qrImg.src = canvas.toDataURL('image/png', 1.0);
+      };
+      // Handle error just in case
+      img.onerror = () => {
+        console.error("Failed to load logo image");
+        qrImg.src = canvas.toDataURL('image/png', 1.0);
+      };
+      img.src = qrCustomization.logoData;
+      return; // Async update
+    } else {
+      // Draw placeholder
+      // Only draw default gray box if we didn't already draw a custom background!
+      if (!drawLogoBg) {
+        ctx.fillStyle = '#f3f4f6';
+        const cornerRadius = logoSize * 0.2; // 20% corner radius
+        ctx.beginPath();
+        ctx.roundRect(logoX, logoY, logoSize, logoSize, cornerRadius);
+        ctx.fill();
+      }
+
+      ctx.strokeStyle = '#d1d5db';
+      ctx.lineWidth = 4;
+
+      // Ensure path exists for stroke if we skipped fill above
+      if (drawLogoBg) {
+        const cornerRadius = logoSize * 0.2;
+        ctx.beginPath();
+        ctx.roundRect(logoX, logoY, logoSize, logoSize, cornerRadius);
+      }
+      ctx.stroke();
+
+      // Draw "LOGO" text
+      ctx.font = `bold ${logoSize * 0.25}px sans-serif`;
+      ctx.fillStyle = '#9ca3af';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('LOGO', canvasSize / 2, canvasSize / 2);
     }
   }
 
@@ -1323,9 +1603,78 @@ function setupCustomizationPanel() {
   const gradientColor2 = document.getElementById('gradientColor2');
   const gradientDirection = document.getElementById('gradientDirection');
 
+  // Logo controls
+  const logoOptionNone = document.getElementById('logoOptionNone');
+  const logoOptionImage = document.getElementById('logoOptionImage');
+  const logoUploadContainer = document.getElementById('logoUploadContainer');
+  const logoUploadBtn = document.getElementById('logoUploadBtn');
+  const logoInput = document.getElementById('logoInput');
+  // Logo controls
+
+  const logoFileName = document.getElementById('logoFileName');
+
+  // Logo BG controls
+  const logoBgOptions = document.getElementsByName('logoBgOption');
+  const logoBgColorContainer = document.getElementById('logoBgColorContainer');
+  const logoBgColorPicker = document.getElementById('logoBgColorPicker');
+  const logoBgTransparentBtn = document.getElementById('logoBgTransparentBtn');
+
   // Toggle panel (similar to download dropdown)
   editBtn.addEventListener('click', (e) => {
     e.stopPropagation();
+
+    // Sync UI with current state when opening
+    bgColorPicker.value = qrCustomization.backgroundColor;
+    bgOpacitySlider.value = qrCustomization.backgroundOpacity;
+    bgOpacityValue.textContent = qrCustomization.backgroundOpacity + '%';
+    qrSpacingSlider.value = qrCustomization.spacing;
+    qrSpacingValue.textContent = qrCustomization.spacing + 'px';
+    qrStyleSelect.value = qrCustomization.qrStyle;
+    qrColorPicker.value = qrCustomization.qrColor;
+
+    if (qrCustomization.isGradient) {
+      gradientControls.style.display = 'block';
+      gradientToggle.textContent = 'Solid';
+    } else {
+      gradientControls.style.display = 'none';
+      gradientToggle.textContent = 'Gradient';
+    }
+    gradientColor1.value = qrCustomization.gradientColor1;
+    gradientColor2.value = qrCustomization.gradientColor2;
+    gradientDirection.value = qrCustomization.gradientDirection;
+
+    if (qrCustomization.logoOption === 'image') {
+      logoOptionImage.checked = true;
+      logoUploadContainer.style.display = 'block';
+      if (qrCustomization.logoData) {
+        logoFileName.textContent = 'Image loaded';
+      }
+    } else {
+      logoOptionNone.checked = true;
+      logoUploadContainer.style.display = 'none';
+    }
+
+    // Sync Logo BG state
+    // Reset all states first
+    logoBgTransparentBtn.classList.remove('selected');
+    for (const option of logoBgOptions) {
+      option.checked = false;
+    }
+
+    if (qrCustomization.logoBgOption === 'transparent') {
+      logoBgTransparentBtn.classList.add('selected');
+      logoBgColorContainer.style.display = 'block'; // Keep container visible for button
+    } else {
+      // Match or Custom
+      for (const option of logoBgOptions) {
+        if (option.value === qrCustomization.logoBgOption) {
+          option.checked = true;
+        }
+      }
+      logoBgColorContainer.style.display = qrCustomization.logoBgOption === 'custom' ? 'block' : 'none';
+    }
+    logoBgColorPicker.value = qrCustomization.logoBgColor;
+
     panel.classList.toggle('expanded');
   });
 
@@ -1334,6 +1683,191 @@ function setupCustomizationPanel() {
     if (!panel.contains(e.target) && !editBtn.contains(e.target)) {
       panel.classList.remove('expanded');
     }
+  });
+
+  // Logo Option Toggle
+  const handleLogoOptionChange = () => {
+    if (logoOptionImage.checked) {
+      qrCustomization.logoOption = 'image';
+      logoUploadContainer.style.display = 'block';
+    } else {
+      qrCustomization.logoOption = 'none';
+      logoUploadContainer.style.display = 'none';
+    }
+    updateQRDisplay();
+  };
+
+  logoOptionNone.addEventListener('change', handleLogoOptionChange);
+  logoOptionImage.addEventListener('change', handleLogoOptionChange);
+
+  // Logo Upload Button
+  logoUploadBtn.addEventListener('click', () => {
+    logoInput.click();
+  });
+
+  // Logo File Input
+  logoInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const logoData = event.target.result;
+        qrCustomization.logoData = logoData;
+        logoFileName.textContent = file.name;
+
+        // Analyze image for shape (Circle vs Square)
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const size = 100; // Analysis size
+          canvas.width = size;
+          canvas.height = size;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, size, size);
+
+          // Check corners for transparency
+          // Top-Left (0,0), Top-Right (w,0), Bottom-Left (0,h), Bottom-Right (w,h)
+          // We check extreme corners AND a point slightly inward (12% in)
+          // A Circle is transparent deep into the corner (~15%), a Rounded Square is opaque by ~6-10%.
+
+          const extremePoints = [
+            ctx.getImageData(0, 0, 1, 1).data,
+            ctx.getImageData(size - 1, 0, 1, 1).data,
+            ctx.getImageData(0, size - 1, 1, 1).data,
+            ctx.getImageData(size - 1, size - 1, 1, 1).data
+          ];
+
+          // Check inner points at 12% (12px on 100px)
+          const innerOffset = Math.floor(size * 0.12);
+          const innerPoints = [
+            ctx.getImageData(innerOffset, innerOffset, 1, 1).data,
+            ctx.getImageData(size - 1 - innerOffset, innerOffset, 1, 1).data,
+            ctx.getImageData(innerOffset, size - 1 - innerOffset, 1, 1).data,
+            ctx.getImageData(size - 1 - innerOffset, size - 1 - innerOffset, 1, 1).data
+          ];
+
+          // 1. Extreme corners must be transparent
+          const cornersTransparent = extremePoints.every(p => p[3] < 10);
+
+          // 2. Inner points must ALSO be transparent for it to be a Circle
+          const innerTransparent = innerPoints.every(p => p[3] < 10);
+
+          let detected = 0.2;
+          if (cornersTransparent && innerTransparent) {
+            detected = 0.5; // Circle
+          } else {
+            detected = 0.2; // Rounded Square
+          }
+          qrCustomization.detectedLogoRadius = detected;
+
+          // Only apply if auto mode is ON
+          if (qrCustomization.logoRadiusMode === 'auto') {
+            qrCustomization.logoCornerRadius = detected;
+            // Update slider visual just in case (optional, but good for feedback if we enable it later)
+            // But slider is disabled in auto mode.
+          }
+
+          updateQRDisplay();
+        };
+        img.src = logoData;
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // Logo BG Option Toggle
+  // RADIUS CONTROLS
+  const logoRadiusAuto = document.getElementById('logoRadiusAuto');
+  const logoRadiusSlider = document.getElementById('logoRadiusSlider');
+  const logoRadiusValue = document.getElementById('logoRadiusValue');
+
+  // Auto Toggle Listener
+  logoRadiusAuto.addEventListener('change', (e) => {
+    const isAuto = e.target.checked;
+    qrCustomization.logoRadiusMode = isAuto ? 'auto' : 'manual';
+
+    if (isAuto) {
+      logoRadiusSlider.disabled = true;
+      logoRadiusValue.textContent = 'Auto';
+      qrCustomization.logoCornerRadius = qrCustomization.detectedLogoRadius;
+    } else {
+      logoRadiusSlider.disabled = false;
+      // Apply current manual value
+      const val = parseInt(logoRadiusSlider.value);
+      logoRadiusValue.textContent = val + '%';
+      qrCustomization.logoManualRadius = val / 100;
+      qrCustomization.logoCornerRadius = qrCustomization.logoManualRadius;
+    }
+    updateQRDisplay();
+  });
+
+  // Slider Listener
+  logoRadiusSlider.addEventListener('input', (e) => {
+    const val = parseInt(e.target.value);
+    logoRadiusValue.textContent = val + '%';
+    qrCustomization.logoManualRadius = val / 100;
+    qrCustomization.logoCornerRadius = qrCustomization.logoManualRadius;
+    updateQRDisplay();
+  });
+
+  logoBgOptions.forEach(option => {
+    option.addEventListener('change', (e) => {
+      qrCustomization.logoBgOption = e.target.value;
+
+      // Reset transparent flag when switching via radio buttons
+      qrCustomization.logoBgTransparent = false;
+
+      // If user clicks a radio (Match or Custom), ensure Transparent button is deselected
+      logoBgTransparentBtn.classList.remove('selected');
+
+      if (e.target.value === 'custom') {
+        logoBgColorContainer.style.display = 'block';
+      } else {
+        logoBgColorContainer.style.display = 'none';
+      }
+      updateQRDisplay();
+    });
+  });
+
+  // Logo BG Color Picker
+  logoBgColorPicker.addEventListener('input', (e) => {
+    qrCustomization.logoBgColor = e.target.value;
+    // Interaction with picker implies Custom mode, not transparent
+    if (qrCustomization.logoBgOption === 'transparent') {
+      qrCustomization.logoBgOption = 'custom';
+      // We need to re-check the custom radio visual state if it was unchecked
+      // Find the custom radio and check it
+      const customRadio = document.querySelector('input[name="logoBgOption"][value="custom"]');
+      if (customRadio) customRadio.checked = true;
+    }
+
+    qrCustomization.logoBgTransparent = false;
+    logoBgTransparentBtn.classList.remove('selected');
+
+    updateQRDisplay();
+  });
+
+  // Logo BG Transparent Button
+  logoBgTransparentBtn.addEventListener('click', () => {
+    qrCustomization.logoBgOption = 'transparent'; // Logic state
+    qrCustomization.logoBgTransparent = true; // Flag legacy support if needed
+
+    // UI State: Select button, Deselect radio (visually)
+    logoBgTransparentBtn.classList.add('selected');
+
+    // To "deselect" the custom radio while keeping the container open:
+    // We can't actually uncheck a radio group easily without checking another.
+    // However, the container visibility is tied to the 'change' event of the group.
+    // If we manually uncheck all radios, the container might hide if we aren't careful?
+    // Actually, we WANT the container to stay open because the button is inside it.
+
+    // Trick: Uncheck all radios in the group to show "None" selected
+    logoBgOptions.forEach(opt => opt.checked = false);
+
+    // Ensure container stays visible since we are in a 'custom-like' mode (transparent)
+    logoBgColorContainer.style.display = 'block';
+
+    updateQRDisplay();
   });
 
   // Apply changes
@@ -1347,6 +1881,12 @@ function setupCustomizationPanel() {
     qrCustomization.gradientColor1 = gradientColor1.value;
     qrCustomization.gradientColor2 = gradientColor2.value;
     qrCustomization.gradientDirection = gradientDirection.value;
+    qrCustomization.logoOption = logoOptionImage.checked ? 'image' : 'none';
+
+    // Logo BG is already live updated via valid listeners above, but ensure it sticks
+    // Actually apply button handles closing AND ensuring values.
+    qrCustomization.logoBgOption = document.querySelector('input[name="logoBgOption"]:checked').value;
+    qrCustomization.logoBgColor = logoBgColorPicker.value;
 
     updateQRDisplay();
     panel.classList.remove('expanded');
@@ -1363,7 +1903,9 @@ function setupCustomizationPanel() {
       gradientColor1: '#000000',
       gradientColor2: '#6366f1',
       gradientDirection: 'horizontal',
-      spacing: 16
+      spacing: 16,
+      logoOption: 'none',
+      logoData: null
     };
 
     // Reset UI values
@@ -1379,6 +1921,19 @@ function setupCustomizationPanel() {
     gradientColor1.value = '#000000';
     gradientColor2.value = '#6366f1';
     gradientDirection.value = 'horizontal';
+
+    logoOptionNone.checked = true;
+    logoUploadContainer.style.display = 'none';
+    logoInput.value = '';
+    logoFileName.textContent = 'No file chosen';
+
+    // Reset Logo BG
+    document.querySelector('input[name="logoBgOption"][value="match"]').checked = true;
+    logoBgColorContainer.style.display = 'none';
+    logoBgColorPicker.value = '#ffffff';
+    qrCustomization.logoBgOption = 'match';
+    qrCustomization.logoBgColor = '#ffffff';
+    qrCustomization.logoBgTransparent = false;
 
     updateQRDisplay();
   });
